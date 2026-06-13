@@ -152,23 +152,33 @@
     margin: 0 auto;
   }
 
-  /* theme toggle */
-  .theme-toggle {
+  /* corner controls */
+  .corner-btn {
     position: absolute;
-    top: 0; right: 0;
-    width: 42px; height: 42px;
+    top: 0;
+    height: 42px;
     border-radius: var(--radius-pill);
     border: 0.5px solid var(--glass-line);
     background: var(--glass-bg);
     color: var(--ink);
-    font-size: 19px;
     cursor: pointer;
-    display: grid; place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    font-family: var(--font-display);
     -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
     transition: transform 0.3s var(--spring), background 0.3s var(--ease);
   }
-  .theme-toggle:hover { background: var(--glass-bg-hover); }
-  .theme-toggle:active { transform: scale(0.9); }
+  .corner-btn:hover { background: var(--glass-bg-hover); }
+  .corner-btn:active { transform: scale(0.92); }
+
+  .theme-toggle { right: 0; width: 42px; font-size: 19px; }
+
+  .back-link { left: 0; padding: 0 15px 0 12px; font-size: 13.5px; color: var(--ink-soft); }
+  .back-link svg { width: 16px; height: 16px; stroke: var(--accent); flex: none; }
+  @media (max-width: 380px) { .back-link .bl-text { display: none; } .back-link { padding: 0; width: 42px; } }
 
   /* generic glass card */
   .card {
@@ -415,7 +425,11 @@
   <div class="wash"></div>
   <div class="shell">
     <header>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <a class="corner-btn back-link" href="index.html" aria-label="Back to Nudge">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span class="bl-text">Nudge</span>
+      </a>
+      <button class="corner-btn theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
       <div class="eyebrow">Eat Right 4 Your Type</div>
       <h1>Type&nbsp;Plate</h1>
       <p class="tagline">Pick your blood group, then glance at any food to see if it's beneficial, neutral, or best avoided.</p>
