@@ -4,6 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Nudge — a tiny dosage of action</title>
+<script>
+  /* resolve theme before first paint to avoid a flash of the wrong mode */
+  (function () {
+    try {
+      var stored = localStorage.getItem('nudge-theme');
+      var dark = stored ? stored === 'dark'
+                        : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    } catch (e) {}
+  })();
+</script>
 <style>
   @font-face {
     font-family: 'Averia Sans Libre';
@@ -25,6 +36,51 @@
     /* springy easing */
     --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* ---- themed surfaces (overridden by [data-theme="dark"]) ---- */
+    --bg-fallback: #2fb6df;
+    --wash-grad: radial-gradient(120% 90% at 50% 30%, rgba(255,255,255,0.18), rgba(255,255,255,0) 55%);
+    --card-bg: linear-gradient(160deg, rgba(255,255,255,0.5), rgba(222,244,255,0.34));
+    --card-gloss: linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0) 32%);
+    --glass-bg: rgba(255,255,255,0.16);
+    --glass-bg-hover: rgba(255,255,255,0.26);
+    --glass-hi: rgba(255,255,255,0.7);
+    --field-bg: rgba(255,255,255,0.4);
+    --field-bg-focus: rgba(255,255,255,0.6);
+    --field-line: rgba(255,255,255,0.6);
+    --accent: #0a6fa0;
+    --dose-col: #0a5577;
+    --ghost-col: #0a5f88;
+    --ring-track: rgba(255,255,255,0.4);
+    --now-bg: rgba(255,255,255,0.4);
+    --btn-bg: rgba(24, 124, 218, 0.40);
+    --btn-bg-hover: rgba(28, 134, 230, 0.52);
+  }
+
+  /* ---- night-pool dark theme ---- */
+  :root[data-theme="dark"] {
+    --ink: #e6f1fb;
+    --ink-soft: #a9cde4;
+    --ink-faint: #6f9db8;
+    --glass-line: rgba(255, 255, 255, 0.16);
+    --sh: 0, 8, 20;
+    --bg-fallback: #081521;
+    --wash-grad: radial-gradient(120% 90% at 50% 16%, rgba(150,200,255,0.10), rgba(255,255,255,0) 55%);
+    --card-bg: linear-gradient(160deg, rgba(34,58,82,0.55), rgba(13,27,43,0.42));
+    --card-gloss: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 32%);
+    --glass-bg: rgba(255,255,255,0.07);
+    --glass-bg-hover: rgba(255,255,255,0.13);
+    --glass-hi: rgba(255,255,255,0.35);
+    --field-bg: rgba(255,255,255,0.06);
+    --field-bg-focus: rgba(255,255,255,0.12);
+    --field-line: rgba(255,255,255,0.18);
+    --accent: #5fb8e8;
+    --dose-col: #c2e3f5;
+    --ghost-col: #8fc2e0;
+    --ring-track: rgba(255,255,255,0.14);
+    --now-bg: rgba(255,255,255,0.06);
+    --btn-bg: rgba(40, 120, 210, 0.45);
+    --btn-bg-hover: rgba(56, 140, 230, 0.60);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,11 +93,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;            /* robust against mobile browser chrome */
     padding: 24px;
+    /* respect notches / rounded corners on mobile */
+    padding-top: max(24px, env(safe-area-inset-top));
+    padding-right: max(24px, env(safe-area-inset-right));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+    padding-left: max(24px, env(safe-area-inset-left));
     position: relative;
     overflow: hidden;
-    background: #2fb6df; /* fallback while WebGL boots */
+    background: var(--bg-fallback); /* fallback while WebGL boots */
+    transition: background 0.5s var(--ease);
   }
 
   /* ---- pool background canvas ---- */
@@ -59,7 +122,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: radial-gradient(120% 90% at 50% 30%, rgba(255,255,255,0.18), rgba(255,255,255,0) 55%);
+    background: var(--wash-grad);
   }
 
   /* ============ liquid glass card ============ */
@@ -71,7 +134,7 @@
     padding: 46px 40px;
     text-align: center;
     border-radius: var(--radius-lg);
-    background: linear-gradient(160deg, rgba(255,255,255,0.5), rgba(222,244,255,0.34));
+    background: var(--card-bg);
     border: 0.5px solid var(--glass-line);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.6),
@@ -85,7 +148,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0) 32%);
+    background: var(--card-gloss);
     pointer-events: none;
   }
 
@@ -124,7 +187,7 @@
     font-size: 11.5px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #0a6fa0;
+    color: var(--accent);
     font-weight: 600;
     margin-bottom: 14px;
   }
@@ -152,8 +215,8 @@
 
   textarea#task {
     width: 100%;
-    border: 0.5px solid rgba(255,255,255,0.6);
-    background: rgba(255,255,255,0.4);
+    border: 0.5px solid var(--field-line);
+    background: var(--field-bg);
     border-radius: var(--radius-md);
     padding: 20px 22px;
     font: inherit;
@@ -168,7 +231,7 @@
   textarea#task:focus {
     outline: none;
     border-color: #4fc3f7;
-    background: rgba(255,255,255,0.6);
+    background: var(--field-bg-focus);
     box-shadow: inset 0 2px 6px rgba(var(--sh),0.10), 0 0 0 4px rgba(79,195,247,0.3);
   }
 
@@ -181,12 +244,12 @@
   /* ---- liquid glass interactive surfaces (iOS-style, restrained) ---- */
   .glass {
     position: relative;
-    border: 0.5px solid rgba(255,255,255,0.5);
-    background: rgba(255,255,255,0.16);
+    border: 0.5px solid var(--glass-line);
+    background: var(--glass-bg);
     -webkit-backdrop-filter: blur(10px) saturate(140%);
     backdrop-filter: blur(10px) saturate(140%);
     box-shadow:
-      inset 0 0.5px 0.5px rgba(255,255,255,0.7),
+      inset 0 0.5px 0.5px var(--glass-hi),
       0 2px 10px rgba(var(--sh), 0.14);
     overflow: hidden;
     cursor: pointer;
@@ -202,9 +265,9 @@
     pointer-events: none;
   }
   .glass:hover {
-    background: rgba(255,255,255,0.26);
+    background: var(--glass-bg-hover);
     box-shadow:
-      inset 0 0.5px 0.5px rgba(255,255,255,0.85),
+      inset 0 0.5px 0.5px var(--glass-hi),
       0 10px 26px rgba(var(--sh), 0.24);
   }
   /* transforms (tilt / drag / press) are driven by JS so they never conflict */
@@ -213,7 +276,7 @@
     border-radius: var(--radius-sm);
     padding: 26px 8px;
     text-align: center;
-    color: #0a5577;
+    color: var(--dose-col);
     touch-action: none; /* let pointer drag work without scrolling */
     user-select: none;
   }
@@ -232,17 +295,17 @@
   }
   /* primary action: subtle blue-tinted glass */
   .btn:not(.btn-ghost) {
-    background: rgba(24, 124, 218, 0.40);
-    border-color: rgba(255,255,255,0.55);
+    background: var(--btn-bg);
+    border-color: var(--glass-line);
   }
-  .btn:not(.btn-ghost):hover { background: rgba(28, 134, 230, 0.52); }
+  .btn:not(.btn-ghost):hover { background: var(--btn-bg-hover); }
   .btn:disabled {
     opacity: 0.45;
     cursor: not-allowed;
     pointer-events: none;
   }
   .btn-ghost {
-    color: #0a5f88;
+    color: var(--ghost-col);
   }
 
   .btn-row { display: flex; gap: 12px; }
@@ -261,8 +324,8 @@
     font-size: 18px;
     line-height: 1.5;
     color: var(--ink);
-    background: rgba(255,255,255,0.4);
-    border: 1px solid rgba(255,255,255,0.55);
+    background: var(--now-bg);
+    border: 1px solid var(--glass-line);
     border-radius: var(--radius-md);
     padding: 16px 22px;
     margin-bottom: 30px;
@@ -270,8 +333,8 @@
   }
 
   .ring-wrap { position: relative; width: 252px; height: 252px; margin: 4px auto 30px; }
-  .ring-wrap svg { transform: rotate(-90deg); display: block; overflow: visible; } /* overflow visible kills the edge-clip */
-  .ring-track { stroke: rgba(255,255,255,0.4); }
+  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; overflow: visible; } /* overflow visible kills the edge-clip */
+  .ring-track { stroke: var(--ring-track); }
   .ring-fg { stroke: url(#ringGrad); stroke-linecap: round; filter: url(#aquaGlow); }
   .ring-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
   .time { font-family: var(--font-display); font-size: 62px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
@@ -295,17 +358,57 @@
   }
   .check svg { width: 36px; height: 36px; stroke: #fff; }
 
+  /* ============ theme toggle ============ */
+  .theme-toggle {
+    position: fixed;
+    top: max(16px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-soft);
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.25s var(--ease), box-shadow 0.25s var(--ease), color 0.5s var(--ease);
+  }
+  .theme-toggle svg { width: 21px; height: 21px; display: block; }
+  .theme-toggle .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
   @media (max-width: 480px) {
-    .card { padding: 34px 24px; }
+    body { padding: 16px; }
+    .card { padding: 34px 22px; max-width: 100%; }
     h1 { font-size: 28px; }
-    .ring-wrap { width: 220px; height: 220px; }
+    .doses { gap: 10px; }
+    .dose { padding: 24px 4px; }
+    .dose .n { font-size: 32px; }
+    .ring-wrap { width: min(220px, 72vw); height: min(220px, 72vw); }
     .time { font-size: 54px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   }
 </style>
 </head>
 <body>
   <canvas id="pool"></canvas>
   <div class="wash"></div>
+
+  <button id="themeToggle" class="theme-toggle glass" type="button" aria-label="Toggle dark mode">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4.2"/>
+      <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 14.5A8 8 0 1 1 9.5 4a6.2 6.2 0 0 0 10.5 10.5Z"/>
+    </svg>
+  </button>
 
   <main class="card">
     <!-- ============ MASCOT ============ -->
@@ -334,11 +437,9 @@
           <!-- pupils (these follow the cursor) -->
           <g class="pupil">
             <ellipse cx="55" cy="76" rx="6.5" ry="8.5" fill="url(#pupilGrad)" />
-            <circle cx="52.6" cy="73" r="1.9" fill="#ffffff" opacity="0.9" />
           </g>
           <g class="pupil">
             <ellipse cx="92" cy="72" rx="6" ry="8" fill="url(#pupilGrad)" />
-            <circle cx="89.8" cy="69" r="1.7" fill="#ffffff" opacity="0.9" />
           </g>
         </svg>
       </div>
@@ -425,7 +526,11 @@
     uMouse: { value: new THREE.Vector2(0.5, 0.5) },   // eased cursor, 0..1
     uSplashPos: { value: new THREE.Vector2(0.5, 0.3) },
     uSplashT: { value: -100 },                          // real-second stamp of last splash
+    uDark: { value: 0 },                                // 0 = day pool, 1 = night pool (eased)
   };
+  // start at the right mood so there's no day→night fade on load
+  const _darkTarget = { v: document.documentElement.getAttribute('data-theme') === 'dark' ? 1 : 0 };
+  uniforms.uDark.value = _darkTarget.v;
 
   const material = new THREE.ShaderMaterial({
     uniforms,
@@ -442,6 +547,7 @@
       uniform vec2 uMouse;
       uniform vec2 uSplashPos;
       uniform float uSplashT;
+      uniform float uDark;
 
       // cheap value noise — no trig, non-tiling
       float hash(vec2 p) {
@@ -483,13 +589,17 @@
         // ---- large slow variation so the surface never reads as tiled ----
         float vary = 0.82 + 0.36 * noise(p * 0.8 - t * 0.2);
 
-        vec3 deep    = vec3(0.04, 0.42, 0.63);
-        vec3 shallow = vec3(0.28, 0.71, 0.86);
+        // day vs. night water palette
+        vec3 deep    = mix(vec3(0.04, 0.42, 0.63), vec3(0.012, 0.055, 0.12), uDark);
+        vec3 shallow = mix(vec3(0.28, 0.71, 0.86), vec3(0.05, 0.20, 0.34),  uDark);
         vec3 col = mix(deep, shallow, uv.y * 0.5 + 0.28) * vary;
-        col += caustic * vec3(0.78, 0.94, 1.0) * 0.62;
+        // caustics cool to a moonlit blue at night
+        vec3 caustCol = mix(vec3(0.78, 0.94, 1.0), vec3(0.42, 0.66, 0.92), uDark);
+        col += caustic * caustCol * mix(0.62, 0.52, uDark);
 
-        // sun sparkle in the upper-left + faint cursor glow
-        col += smoothstep(0.7, 0.0, distance(uv, vec2(0.18, 0.9))) * 0.09;
+        // overhead light (warm sun by day, cool moon by night) + faint cursor glow
+        float overhead = smoothstep(0.7, 0.0, distance(uv, vec2(0.18, 0.9)));
+        col += overhead * mix(0.09, 0.07, uDark) * mix(vec3(1.0), vec3(0.62, 0.80, 1.0), uDark);
         col += smoothstep(0.16, 0.0, md) * 0.04;
 
         // ---- splash ripple when a task is tossed in ----
@@ -498,10 +608,11 @@
           vec2 ap = vec2(uSplashPos.x * aspect, uSplashPos.y);
           float ring = smoothstep(0.05, 0.0, abs(distance(p, ap) - st * 0.45));
           float fade = 1.0 - st / 1.8;
-          col += ring * fade * fade * 0.7 * vec3(0.9, 1.0, 1.0);
+          col += ring * fade * fade * 0.7 * mix(vec3(0.9, 1.0, 1.0), vec3(0.55, 0.78, 1.0), uDark);
         }
 
         col *= 0.8 + 0.12 * smoothstep(1.2, 0.3, length(uv - 0.5)); // tone down + gentle vignette
+        col *= mix(1.0, 0.86, uDark);                                // night water sits a touch deeper
         gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
       }
     `,
@@ -531,6 +642,9 @@
     uniforms.uSplashT.value = uniforms.uClock.value;
   };
 
+  // called by the theme manager — the water eases between day and night
+  window.poolSetDark = (on) => { _darkTarget.v = on ? 1 : 0; };
+
   let rafId = null;          // single-loop guard prevents stacked rAF loops (leak)
   let last = 0;
   const start = performance.now();
@@ -544,6 +658,7 @@
     const m = uniforms.uMouse.value;
     m.x += (targetMouse.x - m.x) * 0.08;
     m.y += (targetMouse.y - m.y) * 0.08;
+    uniforms.uDark.value += (_darkTarget.v - uniforms.uDark.value) * 0.06; // ease day↔night
     renderer.render(scene, camera);
   }
   function play()  { if (rafId === null) { last = 0; rafId = requestAnimationFrame(loop); } }
@@ -891,6 +1006,38 @@
   };
   mascot.addEventListener('pointerup', release);
   mascot.addEventListener('pointercancel', release);
+})();
+
+/* ====================== theme (day / night pool) ====================== */
+(function () {
+  const root = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function apply(theme) {
+    root.setAttribute('data-theme', theme);
+    if (window.poolSetDark) window.poolSetDark(theme === 'dark');
+  }
+
+  // honour whatever the head script already resolved
+  apply(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('nudge-theme', next); } catch (e) {}
+      apply(next);
+    });
+  }
+
+  // follow the OS unless the user has made an explicit choice
+  const onSystem = (e) => {
+    let stored = null;
+    try { stored = localStorage.getItem('nudge-theme'); } catch (e) {}
+    if (!stored) apply(e.matches ? 'dark' : 'light');
+  };
+  if (mq.addEventListener) mq.addEventListener('change', onSystem);
+  else if (mq.addListener) mq.addListener(onSystem);
 })();
 </script>
 </body>
