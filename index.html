@@ -8,7 +8,7 @@
   @font-face {
     font-family: 'Averia Sans Libre';
     src: url('AveriaSansLibre-Bold.ttf') format('truetype');
-    font-weight: 700;
+    font-weight: 100 900;          /* one bold file covers every requested weight */
     font-style: normal;
     font-display: swap;
   }
@@ -30,7 +30,7 @@
   html, body { height: 100%; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    font-family: var(--font-display);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
     display: flex;
@@ -66,8 +66,8 @@
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 440px;
-    padding: 38px 34px;
+    max-width: 460px;
+    padding: 46px 40px;
     text-align: center;
     border-radius: var(--radius-lg);
     background: linear-gradient(160deg, rgba(255,255,255,0.5), rgba(222,244,255,0.34));
@@ -77,9 +77,9 @@
       0 18px 48px rgba(4, 54, 84, 0.22);
     -webkit-backdrop-filter: blur(14px) saturate(150%);
     backdrop-filter: blur(14px) saturate(150%);
-    overflow: hidden;
+    overflow: visible;     /* let dragged buttons fling out over the pool */
   }
-  .card::after { /* fine top gloss */
+  .card::after { /* fine top gloss — clipped to the rounded card */
     content: "";
     position: absolute;
     inset: 0;
@@ -98,17 +98,17 @@
   }
   h1 {
     font-family: var(--font-display);
-    font-size: 27px;
-    line-height: 1.2;
+    font-size: 33px;
+    line-height: 1.22;
     font-weight: 700;
     letter-spacing: -0.01em;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
   }
   .sub {
-    font-size: 15px;
-    line-height: 1.55;
+    font-size: 18px;
+    line-height: 1.6;
     color: var(--ink-soft);
-    margin-bottom: 26px;
+    margin-bottom: 30px;
   }
 
   .panel { display: none; }
@@ -123,16 +123,15 @@
     border: 0.5px solid rgba(255,255,255,0.6);
     background: rgba(255,255,255,0.4);
     border-radius: var(--radius-md);
-    padding: 16px 18px;
+    padding: 20px 22px;
     font: inherit;
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 23px;
     color: var(--ink);
     resize: none;
-    line-height: 1.45;
+    line-height: 1.4;
     box-shadow: inset 0 2px 6px rgba(8,80,120,0.10);
     transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
   textarea#task:focus {
     outline: none;
@@ -144,7 +143,7 @@
   .doses {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 14px;
   }
 
   /* ---- liquid glass interactive surfaces (iOS-style, restrained) ---- */
@@ -171,37 +170,33 @@
     pointer-events: none;
   }
   .glass:hover {
-    transform: translateY(-1px) scale(1.015);
-    background: rgba(255,255,255,0.24);
+    background: rgba(255,255,255,0.26);
     box-shadow:
-      inset 0 0.5px 0.5px rgba(255,255,255,0.8),
-      0 6px 18px rgba(4, 50, 90, 0.16);
+      inset 0 0.5px 0.5px rgba(255,255,255,0.85),
+      0 10px 26px rgba(4, 50, 90, 0.20);
   }
-  .glass:active {
-    transform: scale(0.975);
-    transition: transform 0.1s var(--ease), box-shadow 0.1s var(--ease);
-    box-shadow: inset 0 1px 3px rgba(4, 50, 90, 0.22);
-  }
+  /* transforms (tilt / drag / press) are driven by JS so they never conflict */
 
   .dose {
     border-radius: var(--radius-sm);
-    padding: 20px 8px;
+    padding: 26px 8px;
     text-align: center;
     color: #0a5577;
     touch-action: none; /* let pointer drag work without scrolling */
     user-select: none;
   }
-  .dose .n { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: 0; }
+  .dose .n { font-family: var(--font-display); font-size: 36px; font-weight: 700; letter-spacing: 0; }
 
   .btn {
     width: 100%;
     border-radius: var(--radius-md);
-    padding: 13px;
+    padding: 17px;
     font: inherit;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 18px;
     letter-spacing: 0.01em;
     color: #fff;
+    touch-action: none;
+    user-select: none;
   }
   /* primary action: subtle blue-tinted glass */
   .btn:not(.btn-ghost) {
@@ -222,7 +217,6 @@
   .btn-row .btn { flex: 1; }
 
   /* ---- running ---- */
-  #running.tossing .eyebrow,
   #running.tossing .ring-wrap,
   #running.tossing .whisper,
   #running.tossing .btn-row {
@@ -232,29 +226,26 @@
     pointer-events: none;
   }
   .now-task {
-    font-size: 15px;
+    font-size: 18px;
     line-height: 1.5;
     color: var(--ink);
     background: rgba(255,255,255,0.4);
     border: 1px solid rgba(255,255,255,0.55);
     border-radius: var(--radius-md);
-    padding: 14px 18px;
-    margin-bottom: 26px;
-    font-weight: 600;
+    padding: 16px 22px;
+    margin-bottom: 30px;
     box-shadow: inset 0 1px 1px rgba(255,255,255,0.7);
   }
 
-  .ring-wrap { position: relative; width: 220px; height: 220px; margin: 0 auto 26px; }
-  .ring-wrap svg { transform: rotate(-90deg); display: block; }
-  .ring-bg { stroke: rgba(255,255,255,0.5); }
-  .ring-fg { stroke: url(#ringGrad); stroke-linecap: round; transition: stroke-dashoffset 0.95s linear;
-             filter: drop-shadow(0 2px 6px rgba(10,110,180,0.5)); }
-  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .time { font-family: var(--font-display); font-size: 50px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
-  .time-cap { font-size: 11.5px; color: var(--ink-faint); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 4px; }
+  .ring-wrap { position: relative; width: 252px; height: 252px; margin: 4px auto 30px; }
+  .ring-wrap svg { transform: rotate(-90deg); display: block; overflow: visible; } /* overflow visible kills the edge-clip */
+  .ring-track { stroke: rgba(255,255,255,0.4); }
+  .ring-fg { stroke: url(#ringGrad); stroke-linecap: round; filter: url(#aquaGlow); }
+  .ring-hi { stroke: url(#ringHi); stroke-linecap: round; }
+  .ring-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .time { font-family: var(--font-display); font-size: 62px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
 
-  .whisper { font-size: 13px; color: var(--ink-soft); margin-bottom: 22px; min-height: 18px;
-             transition: opacity 0.4s var(--ease); }
+  .whisper { font-size: 16px; color: var(--ink-soft); margin-bottom: 24px; min-height: 22px; }
 
   /* ---- done ---- */
   .check {
@@ -274,10 +265,10 @@
   .check svg { width: 36px; height: 36px; stroke: #fff; }
 
   @media (max-width: 480px) {
-    .card { padding: 30px 22px; }
-    h1 { font-size: 23px; }
-    .ring-wrap { width: 190px; height: 190px; }
-    .time { font-size: 42px; }
+    .card { padding: 34px 24px; }
+    h1 { font-size: 28px; }
+    .ring-wrap { width: 220px; height: 220px; }
+    .time { font-size: 54px; }
   }
 </style>
 </head>
@@ -299,23 +290,31 @@
 
     <!-- ============ RUNNING ============ -->
     <section class="panel" id="running">
-      <div class="eyebrow">In progress</div>
       <div class="now-task" id="nowTask"></div>
 
       <div class="ring-wrap">
-        <svg width="220" height="220" viewBox="0 0 220 220">
+        <svg width="252" height="252" viewBox="0 0 252 252">
           <defs>
-            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#9be3ff" />
-              <stop offset="100%" stop-color="#1283e6" />
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#b6f4ff" />
+              <stop offset="45%" stop-color="#3cc0f2" />
+              <stop offset="100%" stop-color="#0a72d6" />
             </linearGradient>
+            <linearGradient id="ringHi" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.95)" />
+              <stop offset="50%" stop-color="rgba(255,255,255,0.18)" />
+              <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+            </linearGradient>
+            <filter id="aquaGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#37c6ff" flood-opacity="0.6" />
+            </filter>
           </defs>
-          <circle class="ring-bg" cx="110" cy="110" r="100" fill="none" stroke-width="11" />
-          <circle class="ring-fg" id="ringFg" cx="110" cy="110" r="100" fill="none" stroke-width="11" />
+          <circle class="ring-track" cx="126" cy="126" r="104" fill="none" stroke-width="24" />
+          <circle class="ring-fg" id="ringFg" cx="126" cy="126" r="104" fill="none" stroke-width="24" />
+          <circle class="ring-hi" id="ringHi" cx="126" cy="126" r="104" fill="none" stroke-width="8" />
         </svg>
         <div class="ring-center">
           <div class="time" id="timeText">2:00</div>
-          <div class="time-cap">remaining</div>
         </div>
       </div>
 
@@ -352,7 +351,7 @@
 
   // Render the water at a fraction of screen resolution — caustics are soft, so
   // the downscale is invisible but cuts fragment-shader cost dramatically.
-  const RENDER_SCALE = 0.55;
+  const RENDER_SCALE = 0.62;
   const FPS = 30, FRAME_MS = 1000 / FPS;
 
   const scene = new THREE.Scene();
@@ -383,68 +382,65 @@
       uniform vec2 uSplashPos;
       uniform float uSplashT;
 
-      #define TAU 6.28318530718
-      #define ITER 4
-
-      // caustic field — adapted from the classic TDM water caustics
-      float caustic(vec2 uv) {
-        vec2 p = mod(uv * TAU, TAU) - 250.0;
-        vec2 i = vec2(p);
-        float c = 1.0;
-        float inten = 0.0045;
-        for (int n = 0; n < ITER; n++) {
-          float t = uTime * (1.0 - (3.5 / float(n + 1)));
-          i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
-          c += 1.0 / length(vec2(p.x / (sin(i.x + t) / inten), p.y / (cos(i.y + t) / inten)));
-        }
-        c /= float(ITER);
-        c = 1.17 - pow(c, 1.4);
-        return pow(abs(c), 8.0);
+      // cheap value noise — no trig, non-tiling
+      float hash(vec2 p) {
+        p = fract(p * vec2(127.1, 311.7));
+        p += dot(p, p + 34.5);
+        return fract(p.x * p.y);
+      }
+      float noise(vec2 p) {
+        vec2 i = floor(p), f = fract(p);
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(mix(hash(i),            hash(i + vec2(1.0, 0.0)), u.x),
+                   mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+      }
+      float fbm(vec2 p) {
+        float s = 0.0, a = 0.5;
+        for (int i = 0; i < 3; i++) { s += a * noise(p); p = p * 2.0 + 7.0; a *= 0.5; }
+        return s;
       }
 
       void main() {
         vec2 uv = vUv;
         float aspect = uRes.x / uRes.y;
-        vec2 auv = vec2(uv.x * aspect, uv.y);   // aspect-corrected space (round ripples)
-        vec2 am  = vec2(uMouse.x * aspect, uMouse.y);
+        vec2 p = vec2(uv.x * aspect, uv.y);   // aspect-corrected (round ripples)
+        vec2 m = vec2(uMouse.x * aspect, uMouse.y);
+        float t = uTime;
 
-        // ---- cursor swish: push the water away from the pointer, fading with distance ----
-        float md = distance(auv, am);
-        vec2 push = normalize(auv - am + 1e-4) * 0.05 * exp(-md * 3.5);
+        // ---- cursor swish: push water away from the pointer, fading with distance ----
+        float md = distance(p, m);
+        p += normalize(p - m + 1e-4) * 0.04 * exp(-md * 4.0);
 
-        float cc = caustic((auv + push) * 2.6);
+        // ---- flowing caustic network (domain-warped noise) ----
+        vec2 q = vec2(noise(p * 3.0 + vec2(0.0, t)), noise(p * 3.0 + vec2(5.0, -t)));
+        float n = fbm(p * 4.5 + q * 1.6 + t * 0.5);
+        float caustic = pow(clamp(1.0 - abs(n - 0.5) * 2.4, 0.0, 1.0), 4.0);
+        // finer bright filaments on top for that crisp pool sparkle
+        float n2 = noise(p * 9.0 - q * 2.0 - t * 0.7);
+        caustic += pow(clamp(1.0 - abs(n2 - 0.5) * 3.0, 0.0, 1.0), 6.0) * 0.5;
 
-        // bright pool gradient — deeper toward the bottom
-        vec3 deep    = vec3(0.063, 0.51, 0.69);
-        vec3 shallow = vec3(0.34, 0.80, 0.93);
-        vec3 base = mix(deep, shallow, smoothstep(-0.1, 1.05, uv.y * 0.7 + 0.25));
+        // ---- large slow variation so the surface never reads as tiled ----
+        float vary = 0.82 + 0.36 * noise(p * 0.8 - t * 0.2);
 
-        // caustic light network, faintly tinted toward white-cyan
-        vec3 light = vec3(0.78, 0.97, 1.0);
-        vec3 col = base + cc * light * 0.9;
+        vec3 deep    = vec3(0.05, 0.50, 0.73);
+        vec3 shallow = vec3(0.37, 0.83, 0.96);
+        vec3 col = mix(deep, shallow, uv.y * 0.5 + 0.28) * vary;
+        col += caustic * vec3(0.82, 0.98, 1.0);
 
-        // a touch of sparkle from the sun in the upper-left, like the reference
-        float sun = smoothstep(0.75, 0.0, distance(uv, vec2(0.18, 0.92)));
-        col += sun * 0.18 * vec3(1.0, 1.0, 0.96);
-
-        // faint brightening that trails the cursor
-        col += smoothstep(0.16, 0.0, md) * 0.04;
+        // sun sparkle in the upper-left + faint cursor glow
+        col += smoothstep(0.7, 0.0, distance(uv, vec2(0.18, 0.9))) * 0.14;
+        col += smoothstep(0.16, 0.0, md) * 0.05;
 
         // ---- splash ripple when a task is tossed in ----
         float st = uClock - uSplashT;
         if (st > 0.0 && st < 1.8) {
           vec2 ap = vec2(uSplashPos.x * aspect, uSplashPos.y);
-          float sd = distance(auv, ap);
-          float radius = st * 0.45;                         // expanding ring
-          float ring = smoothstep(0.05, 0.0, abs(sd - radius));
+          float ring = smoothstep(0.05, 0.0, abs(distance(p, ap) - st * 0.45));
           float fade = 1.0 - st / 1.8;
           col += ring * fade * fade * 0.7 * vec3(0.9, 1.0, 1.0);
         }
 
-        // gentle vignette to seat the card
-        float vig = smoothstep(1.25, 0.35, length(uv - 0.5));
-        col *= 0.88 + 0.12 * vig;
-
+        col *= 0.9 + 0.1 * smoothstep(1.2, 0.3, length(uv - 0.5)); // gentle vignette
         gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
       }
     `,
@@ -482,7 +478,7 @@
     rafId = requestAnimationFrame(loop);
     if (now - last < FRAME_MS) return;   // throttle to FPS
     last = now;
-    uniforms.uTime.value = (now - start) * 0.00018; // slow, calm water
+    uniforms.uTime.value = (now - start) * 0.00026; // slow, calm water
     uniforms.uClock.value = (now - start) * 0.001;   // real seconds for the splash
     const m = uniforms.uMouse.value;
     m.x += (targetMouse.x - m.x) * 0.08;
@@ -519,47 +515,73 @@
   const taskInput = document.getElementById('task');
   const doses = document.getElementById('doses');
 
-  // squishy drag: grab a button, fling it around, release → springs back.
-  // A tiny movement counts as a tap and starts that timer.
-  let drag = null;
-  doses.querySelectorAll('.dose').forEach((dose) => {
-    dose.addEventListener('pointerdown', (e) => {
-      drag = { el: dose, x: e.clientX, y: e.clientY, moved: 0, min: parseInt(dose.dataset.min, 10) };
-      dose.setPointerCapture(e.pointerId);
-      dose.style.transition = 'none';
-      dose.style.zIndex = '3';
-    });
-    dose.addEventListener('pointermove', (e) => {
-      if (!drag || drag.el !== dose) return;
-      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-      drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
-      const stretch = Math.min(drag.moved / 220, 0.16); // squish grows as you pull
-      dose.style.transform =
-        `translate(${dx}px, ${dy}px) rotate(${dx * 0.04}deg) scale(${1.05 + stretch})`;
-    });
-    const release = () => {
-      if (!drag || drag.el !== dose) return;
-      const moved = drag.moved, min = drag.min;
-      drag = null;
-      if (moved < 8) {                 // a tap, not a drag
-        dose.style.transition = '';
-        dose.style.transform = '';
-        dose.style.zIndex = '';
-        begin(min);
-      } else {                          // bounce back into place
-        dose.style.transition = 'transform 0.6s var(--spring)';
-        dose.style.transform = '';
-        setTimeout(() => { dose.style.transition = ''; dose.style.zIndex = ''; }, 620);
-      }
-    };
-    dose.addEventListener('pointerup', release);
-    dose.addEventListener('pointercancel', release);
-  });
+  // Every button: 3D tilt on hover, squishy fling on drag (springs back),
+  // press dip on tap. A real drag (>8px) cancels the upcoming click so the
+  // button's action only fires on a genuine tap.
+  const TAP = 8;
+  function makeInteractive(el) {
+    let drag = null;
+    const fast = 'transform 0.12s ease, background 0.25s, box-shadow 0.25s';
+    const spring = 'transform 0.6s var(--spring), background 0.25s, box-shadow 0.25s';
 
-  const RADIUS = 100, CIRC = 2 * Math.PI * RADIUS;
+    el.addEventListener('pointerenter', () => { if (!drag) el.style.transition = fast; });
+
+    el.addEventListener('pointerdown', (e) => {
+      drag = { x: e.clientX, y: e.clientY, moved: 0 };
+      el._noClick = false; // clear any stale suppression from a prior drag
+      el.setPointerCapture(e.pointerId);
+      el.style.transition = 'none';
+      el.style.zIndex = '5';
+      el.style.transform = 'scale(0.96)'; // press dip until a drag begins
+    });
+
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      if (drag) {
+        const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
+        const stretch = Math.min(drag.moved / 220, 0.18);
+        el.style.transform =
+          `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg) scale(${1.06 + stretch})`;
+      } else {
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        el.style.transform =
+          `perspective(520px) rotateY(${px * 14}deg) rotateX(${-py * 14}deg) translateZ(6px)`;
+      }
+    });
+
+    const settle = () => {
+      el.style.transition = spring;
+      el.style.transform = '';
+      setTimeout(() => { el.style.zIndex = ''; }, 600);
+    };
+    el.addEventListener('pointerup', () => {
+      if (!drag) return;
+      const moved = drag.moved; drag = null;
+      if (moved >= TAP) el._noClick = true; // it was a drag → swallow the click
+      settle();
+    });
+    el.addEventListener('pointercancel', () => { if (drag) { drag = null; settle(); } });
+    el.addEventListener('pointerleave', () => { if (!drag) settle(); });
+
+    // capture phase: cancel the click that follows a drag, before the action runs
+    el.addEventListener('click', (e) => {
+      if (el._noClick) { e.preventDefault(); e.stopImmediatePropagation(); el._noClick = false; }
+    }, true);
+  }
+
+  doses.querySelectorAll('.dose').forEach((dose) => {
+    makeInteractive(dose);
+    dose.addEventListener('click', () => begin(parseInt(dose.dataset.min, 10)));
+  });
+  // every other button gets the same interaction (in every state)
+  ['pauseBtn', 'stopBtn', 'moreBtn', 'resetBtn'].forEach((id) => makeInteractive(document.getElementById(id)));
+
+  const RADIUS = 104, CIRC = 2 * Math.PI * RADIUS;
   const ringFg = document.getElementById('ringFg');
-  ringFg.style.strokeDasharray = CIRC;
-  ringFg.style.strokeDashoffset = 0;
+  const ringHi = document.getElementById('ringHi');
+  [ringFg, ringHi].forEach((c) => { c.style.strokeDasharray = CIRC; c.style.strokeDashoffset = 0; });
 
   const timeText = document.getElementById('timeText');
   const nowTask = document.getElementById('nowTask');
@@ -576,44 +598,71 @@
     "Stay with it. You're already in motion.",
   ];
 
-  let totalSec = 0, remaining = 0, tickId = null, paused = false, wIdx = 0, wId = null;
+  // timestamp-based so a backgrounded tab can't desync — endAt is the source of truth
+  let totalMs = 0, endAt = 0, pausedMs = 0, remaining = 0, tickId = null,
+      paused = false, timerOn = false, wIdx = 0, wId = null;
 
   function fmt(s) {
     const m = Math.floor(s / 60), sec = s % 60;
     return m + ':' + String(sec).padStart(2, '0');
   }
-  function render() {
-    timeText.textContent = fmt(remaining);
-    const frac = totalSec === 0 ? 0 : remaining / totalSec;
-    ringFg.style.strokeDashoffset = CIRC * (1 - frac);
+
+  // animate=false snaps instantly (used on start + when returning to the tab) so
+  // the ring never re-sweeps from the beginning.
+  function setRing(frac, animate) {
+    const off = CIRC * (1 - Math.max(0, Math.min(1, frac)));
+    const trans = animate ? 'stroke-dashoffset 0.4s linear' : 'none';
+    [ringFg, ringHi].forEach((c) => { c.style.transition = trans; c.style.strokeDashoffset = off; });
+    if (!animate) void ringFg.getBoundingClientRect(); // flush so the next tick eases
   }
+
+  function refreshRing(animate) {
+    if (!timerOn) return;
+    const msLeft = Math.max(0, endAt - Date.now());
+    const sec = Math.ceil(msLeft / 1000);
+    if (sec !== remaining) { remaining = sec; timeText.textContent = fmt(sec); }
+    setRing(totalMs ? msLeft / totalMs : 0, animate);
+    if (msLeft <= 0) { timerOn = false; finish(); }
+  }
+
   function startTimer(seconds) {
-    totalSec = seconds; remaining = seconds; paused = false;
+    totalMs = seconds * 1000;
+    endAt = Date.now() + totalMs;
+    remaining = seconds;
+    paused = false;
+    timerOn = true;
     pauseBtn.textContent = 'Pause';
-    render();
+    timeText.textContent = fmt(seconds);
+    setRing(1, false);
     clearInterval(tickId);
-    tickId = setInterval(tick, 1000);
+    tickId = setInterval(() => { if (!paused) refreshRing(true); }, 250);
     cycleWhisper(true);
   }
-  function tick() {
-    if (paused) return;
-    remaining -= 1;
-    if (remaining <= 0) { remaining = 0; render(); finish(); return; }
-    render();
-  }
+
+  // re-sync the ring instantly when the tab becomes visible again
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && timerOn && !paused && panels.running.classList.contains('active')) {
+      refreshRing(false);
+    }
+  });
+
   function cycleWhisper(reset) {
     clearInterval(wId);
     if (reset) wIdx = 0;
+    whisper.style.opacity = 1;
     wId = setInterval(() => {
+      whisper.style.transition = 'opacity 1.4s var(--ease)'; // slow, gentle fade-out
       whisper.style.opacity = 0;
       setTimeout(() => {
         wIdx = (wIdx + 1) % whispers.length;
         whisper.textContent = whispers[wIdx];
+        whisper.style.transition = 'opacity 0.7s var(--ease)'; // quicker fade back in
         whisper.style.opacity = 1;
-      }, 400);
-    }, 12000);
+      }, 1400);
+    }, 14000);
   }
   function finish() {
+    timerOn = false;
     clearInterval(tickId); clearInterval(wId);
     completeTask('You started.',
       "That was the hard part. The task was never as bad as your head made it. Want to keep the momentum?");
@@ -677,11 +726,20 @@
     startTimer(min * 60);
   }
   pauseBtn.addEventListener('click', () => {
+    if (!timerOn) return;
     paused = !paused;
+    if (paused) {
+      pausedMs = endAt - Date.now();         // freeze the remaining time
+    } else {
+      endAt = Date.now() + Math.max(0, pausedMs); // resume from where we froze
+      refreshRing(false);
+    }
     pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+    whisper.style.transition = 'opacity 0.3s var(--ease)';
     whisper.textContent = paused ? 'Paused. Pick it back up when ready.' : whispers[wIdx];
   });
   stopBtn.addEventListener('click', () => {
+    timerOn = false;
     clearInterval(tickId); clearInterval(wId);
     completeTask('You showed up.',
       "Stopping by choice is different from never starting. You broke the inertia — that counts.");
@@ -691,6 +749,7 @@
     startTimer(5 * 60);
   });
   document.getElementById('resetBtn').addEventListener('click', () => {
+    timerOn = false;
     clearInterval(tickId); clearInterval(wId);
     taskInput.value = '';
     show('setup');
