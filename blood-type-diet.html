@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Type Plate — Blood Type Diet quick reference</title>
+<meta name="description" content="A one-page, mobile-friendly quick reference for the D'Adamo Blood Type Diet. Pick your blood group and instantly see which foods are beneficial, neutral, or best avoided." />
+<script>
+  /* resolve theme before first paint to avoid a flash of the wrong mode */
+  (function () {
+    try {
+      var stored = localStorage.getItem('type-plate-theme');
+      var dark = stored ? stored === 'dark'
+                        : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    } catch (e) {}
+  })();
+</script>
+<style>
+  @font-face {
+    font-family: 'Averia Sans Libre';
+    src: url('AveriaSansLibre-Bold.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  :root {
+    --font-display: 'Averia Sans Libre', Georgia, serif;
+    --ink: #073b54;
+    --ink-soft: #1d5e7e;
+    --ink-faint: #4a87a3;
+    --glass-line: rgba(255, 255, 255, 0.55);
+    --sh: 12, 124, 178;
+    --radius-lg: 30px;
+    --radius-md: 20px;
+    --radius-sm: 16px;
+    --radius-pill: 999px;
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    --bg-fallback: #2fb6df;
+    --bg-grad: radial-gradient(125% 95% at 50% 0%, #6fd2ee 0%, #2fb6df 42%, #1f93c4 100%);
+    --wash-grad: radial-gradient(120% 90% at 50% 30%, rgba(255,255,255,0.18), rgba(255,255,255,0) 55%);
+    --card-bg: linear-gradient(160deg, rgba(255,255,255,0.62), rgba(222,244,255,0.46));
+    --card-gloss: linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0) 32%);
+    --glass-bg: rgba(255,255,255,0.28);
+    --glass-bg-hover: rgba(255,255,255,0.42);
+    --field-bg: rgba(255,255,255,0.5);
+    --field-bg-focus: rgba(255,255,255,0.72);
+    --field-line: rgba(255,255,255,0.7);
+    --accent: #0a6fa0;
+
+    /* food status colours */
+    --good: #1f8a4c;
+    --good-bg: rgba(46, 184, 110, 0.20);
+    --good-line: rgba(46, 184, 110, 0.55);
+    --meh: #9a6a12;
+    --meh-bg: rgba(225, 170, 60, 0.20);
+    --meh-line: rgba(225, 170, 60, 0.55);
+    --bad: #b23b3b;
+    --bad-bg: rgba(214, 80, 80, 0.18);
+    --bad-line: rgba(214, 80, 80, 0.5);
+  }
+
+  :root[data-theme="dark"] {
+    --ink: #e6f1fb;
+    --ink-soft: #a9cde4;
+    --ink-faint: #6f9db8;
+    --glass-line: rgba(255, 255, 255, 0.16);
+    --sh: 0, 8, 20;
+    --bg-fallback: #081521;
+    --bg-grad: radial-gradient(125% 95% at 50% 0%, #143247 0%, #0c2030 45%, #081521 100%);
+    --wash-grad: radial-gradient(120% 90% at 50% 16%, rgba(150,200,255,0.10), rgba(255,255,255,0) 55%);
+    --card-bg: linear-gradient(160deg, rgba(34,58,82,0.62), rgba(13,27,43,0.5));
+    --card-gloss: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 32%);
+    --glass-bg: rgba(255,255,255,0.08);
+    --glass-bg-hover: rgba(255,255,255,0.16);
+    --field-bg: rgba(255,255,255,0.07);
+    --field-bg-focus: rgba(255,255,255,0.14);
+    --field-line: rgba(255,255,255,0.2);
+    --accent: #5fb8e8;
+
+    --good: #6fe0a0;
+    --good-bg: rgba(46, 184, 110, 0.20);
+    --good-line: rgba(46, 184, 110, 0.45);
+    --meh: #f2cd7a;
+    --meh-bg: rgba(225, 180, 80, 0.16);
+    --meh-line: rgba(225, 180, 80, 0.4);
+    --bad: #f29494;
+    --bad-bg: rgba(214, 90, 90, 0.18);
+    --bad-line: rgba(214, 90, 90, 0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+
+  body {
+    font-family: var(--font-display);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--bg-fallback);
+    background-image: var(--bg-grad);
+    background-attachment: fixed;
+    transition: background-color 0.5s var(--ease);
+    padding: 22px 16px 60px;
+    padding-top: max(22px, env(safe-area-inset-top));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-bottom: max(60px, env(safe-area-inset-bottom));
+    padding-left: max(16px, env(safe-area-inset-left));
+  }
+
+  .wash {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: var(--wash-grad);
+  }
+
+  .shell {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  /* ---------- header ---------- */
+  header { text-align: center; margin-bottom: 22px; }
+  .eyebrow {
+    font-size: 11.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 34px;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .tagline {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 38ch;
+    margin: 0 auto;
+  }
+
+  /* theme toggle */
+  .theme-toggle {
+    position: absolute;
+    top: 0; right: 0;
+    width: 42px; height: 42px;
+    border-radius: var(--radius-pill);
+    border: 0.5px solid var(--glass-line);
+    background: var(--glass-bg);
+    color: var(--ink);
+    font-size: 19px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    transition: transform 0.3s var(--spring), background 0.3s var(--ease);
+  }
+  .theme-toggle:hover { background: var(--glass-bg-hover); }
+  .theme-toggle:active { transform: scale(0.9); }
+
+  /* generic glass card */
+  .card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    border: 0.5px solid var(--glass-line);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.55),
+      0 16px 40px rgba(var(--sh), 0.20);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    backdrop-filter: blur(14px) saturate(150%);
+    overflow: hidden;
+  }
+
+  /* ---------- blood-type selector ---------- */
+  .types {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .type-btn {
+    appearance: none;
+    border: 0.5px solid var(--glass-line);
+    background: var(--glass-bg);
+    color: var(--ink);
+    border-radius: var(--radius-md);
+    padding: 14px 4px 12px;
+    cursor: pointer;
+    text-align: center;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    transition: transform 0.3s var(--spring), background 0.25s var(--ease),
+                box-shadow 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+  .type-btn:hover { background: var(--glass-bg-hover); }
+  .type-btn:active { transform: scale(0.94); }
+  .type-btn .letter {
+    display: block;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .type-btn .label {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.01em;
+  }
+  .type-btn[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(var(--sh), 0.30);
+    transform: translateY(-2px);
+  }
+  .type-btn[aria-pressed="true"] .label { color: rgba(255,255,255,0.85); }
+
+  /* ---------- profile blurb ---------- */
+  .profile {
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .profile h2 {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .profile h2 .nick { color: var(--accent); }
+  .profile p {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .profile .keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 12px;
+  }
+  .profile .keys span {
+    font-size: 12px;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    background: var(--glass-bg);
+    border: 0.5px solid var(--glass-line);
+    color: var(--ink-soft);
+  }
+
+  /* ---------- controls ---------- */
+  .controls { margin-bottom: 14px; }
+  .search-wrap { position: relative; margin-bottom: 12px; }
+  .search-wrap svg {
+    position: absolute;
+    left: 16px; top: 50%;
+    transform: translateY(-50%);
+    width: 18px; height: 18px;
+    stroke: var(--ink-faint);
+    pointer-events: none;
+  }
+  input#search {
+    width: 100%;
+    font-family: var(--font-display);
+    font-size: 16px;            /* >=16px stops iOS zoom on focus */
+    color: var(--ink);
+    border: 0.5px solid var(--field-line);
+    background: var(--field-bg);
+    border-radius: var(--radius-pill);
+    padding: 13px 16px 13px 44px;
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    transition: background 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  input#search:focus {
+    outline: none;
+    background: var(--field-bg-focus);
+    box-shadow: 0 0 0 3px rgba(var(--sh), 0.18);
+  }
+  input#search::placeholder { color: var(--ink-faint); }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter {
+    flex: 1 1 0;
+    min-width: 70px;
+    appearance: none;
+    border: 0.5px solid var(--glass-line);
+    background: var(--glass-bg);
+    color: var(--ink-soft);
+    border-radius: var(--radius-pill);
+    padding: 9px 8px;
+    font-size: 13px;
+    font-family: var(--font-display);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--spring);
+  }
+  .filter:active { transform: scale(0.95); }
+  .filter .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .filter[data-key="good"] .dot { background: var(--good); }
+  .filter[data-key="neutral"] .dot { background: var(--meh); }
+  .filter[data-key="avoid"] .dot { background: var(--bad); }
+  .filter[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ---------- food list ---------- */
+  .cat { margin-bottom: 14px; }
+  .cat-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    font-family: var(--font-display);
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+  }
+  .cat-head .ct-left { display: flex; align-items: center; gap: 11px; }
+  .cat-head .emoji { font-size: 19px; }
+  .cat-head .ct-name { font-size: 16.5px; font-weight: 700; }
+  .cat-head .ct-count {
+    font-size: 12px; color: var(--ink-faint);
+    background: var(--glass-bg);
+    border-radius: var(--radius-pill);
+    padding: 2px 9px;
+  }
+  .cat-head .chev {
+    width: 16px; height: 16px; stroke: var(--ink-faint);
+    transition: transform 0.3s var(--ease);
+  }
+  .cat.collapsed .chev { transform: rotate(-90deg); }
+  .cat.collapsed .food-list { display: none; }
+
+  .food-list { padding: 0 12px 8px; }
+  .food {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 10px;
+    border-top: 0.5px solid var(--glass-line);
+  }
+  .food:first-child { border-top: none; }
+  .food .fname { font-size: 15px; }
+  .badge {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    border: 0.5px solid transparent;
+    white-space: nowrap;
+  }
+  .badge .ic { font-size: 12px; }
+  .badge.good    { color: var(--good); background: var(--good-bg); border-color: var(--good-line); }
+  .badge.neutral { color: var(--meh);  background: var(--meh-bg);  border-color: var(--meh-line); }
+  .badge.avoid   { color: var(--bad);  background: var(--bad-bg);  border-color: var(--bad-line); }
+
+  .empty {
+    text-align: center;
+    color: var(--ink-faint);
+    padding: 34px 16px;
+    font-size: 15px;
+  }
+
+  /* disclaimer */
+  .disclaimer {
+    margin-top: 18px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-faint);
+    text-align: center;
+    max-width: 52ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .disclaimer strong { color: var(--ink-soft); }
+
+  @media (max-width: 380px) {
+    h1 { font-size: 29px; }
+    .type-btn .letter { font-size: 23px; }
+    .type-btn .label { font-size: 10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="wash"></div>
+  <div class="shell">
+    <header>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+      <div class="eyebrow">Eat Right 4 Your Type</div>
+      <h1>Type&nbsp;Plate</h1>
+      <p class="tagline">Pick your blood group, then glance at any food to see if it's beneficial, neutral, or best avoided.</p>
+    </header>
+
+    <nav class="types" id="typeSelector" aria-label="Choose your blood type"></nav>
+
+    <section class="card profile" id="profile" aria-live="polite"></section>
+
+    <div class="controls">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input id="search" type="search" inputmode="search" autocomplete="off" placeholder="Search foods — e.g. salmon, tofu, banana" aria-label="Search foods" />
+      </div>
+      <div class="filters" id="filters">
+        <button class="filter" data-key="all" aria-pressed="true">All</button>
+        <button class="filter" data-key="good"><span class="dot"></span>Beneficial</button>
+        <button class="filter" data-key="neutral"><span class="dot"></span>Neutral</button>
+        <button class="filter" data-key="avoid"><span class="dot"></span>Avoid</button>
+      </div>
+    </div>
+
+    <main class="card" id="menu"></main>
+
+    <p class="disclaimer">
+      <strong>For quick reference only.</strong> The Blood Type Diet was proposed by Dr. Peter J. D'Adamo in <em>Eat Right 4 Your Type</em>. Current scientific evidence does not support tailoring diet to blood type. This page summarises his recommendations and is <strong>not medical advice</strong> — talk to a doctor or dietitian before making changes.
+    </p>
+  </div>
+
+<script>
+/* ----------------------------------------------------------------------
+   Blood-type profiles
+---------------------------------------------------------------------- */
+const TYPES = {
+  O: {
+    nick: "The Hunter",
+    blurb: "Built for a high-protein, lower-carb plate. Thrives on lean meats, fish and vegetables; tends to do poorly on wheat, most beans and dairy.",
+    keys: ["High protein", "Lean meat & fish", "Limit grains", "Limit dairy"]
+  },
+  A: {
+    nick: "The Cultivator",
+    blurb: "Leans plant-based. Does best on vegetables, soy, beans and grains with seafood in moderation; red meat and dairy are usually a struggle.",
+    keys: ["Mostly plant-based", "Soy & legumes", "Limit red meat", "Limit dairy"]
+  },
+  B: {
+    nick: "The Nomad",
+    blurb: "The flexible omnivore — and the one type that genuinely tolerates dairy. Avoid chicken, corn, wheat, lentils and tomatoes.",
+    keys: ["Balanced omnivore", "Dairy friendly", "No chicken", "Limit corn & wheat"]
+  },
+  AB: {
+    nick: "The Enigma",
+    blurb: "A blend of A and B. Favours seafood, tofu, dairy and greens; keep red meat, caffeine and smoked or cured foods to a minimum.",
+    keys: ["Seafood & tofu", "Some dairy", "Limit red meat", "Limit caffeine"]
+  }
+};
+
+/* status codes: 1 = beneficial, 0 = neutral, -1 = avoid  [O, A, B, AB] */
+const MENU = [
+  { cat: "Meat & Poultry", emoji: "🍗", foods: [
+    { n: "Beef",            r: [ 1,-1, 0,-1] },
+    { n: "Lamb",            r: [ 1,-1, 1, 1] },
+    { n: "Mutton",          r: [ 1,-1, 1, 1] },
+    { n: "Veal",            r: [ 1,-1, 0,-1] },
+    { n: "Venison",         r: [ 1,-1, 0,-1] },
+    { n: "Rabbit",          r: [ 0, 0, 1, 0] },
+    { n: "Turkey",          r: [ 0, 0, 0, 1] },
+    { n: "Chicken",         r: [ 0, 0,-1,-1] },
+    { n: "Duck",            r: [ 0, 0,-1,-1] },
+    { n: "Pork / Bacon",    r: [-1,-1,-1,-1] },
+  ]},
+  { cat: "Seafood", emoji: "🐟", foods: [
+    { n: "Cod",             r: [ 1, 1, 1, 1] },
+    { n: "Salmon",          r: [ 1, 1, 1, 1] },
+    { n: "Mackerel",        r: [ 1, 1, 1, 1] },
+    { n: "Sardines",        r: [ 1, 1, 0, 1] },
+    { n: "Red snapper",     r: [ 1, 1, 1, 1] },
+    { n: "Halibut",         r: [ 1, 0, 1, 0] },
+    { n: "Herring (fresh)", r: [ 1, 0, 0,-1] },
+    { n: "Tuna",            r: [ 0, 0, 0, 1] },
+    { n: "Trout",           r: [ 0, 1, 0, 0] },
+    { n: "Shrimp / Prawn",  r: [ 0,-1,-1,-1] },
+    { n: "Crab",            r: [ 0,-1,-1,-1] },
+    { n: "Lobster",         r: [-1,-1,-1,-1] },
+    { n: "Clams / Oysters", r: [ 0,-1,-1,-1] },
+    { n: "Smoked salmon",   r: [-1,-1,-1,-1] },
+  ]},
+  { cat: "Eggs & Dairy", emoji: "🧀", foods: [
+    { n: "Eggs",            r: [ 0, 0, 0, 0] },
+    { n: "Yogurt",          r: [-1, 0, 1, 1] },
+    { n: "Kefir",           r: [-1, 0, 1, 0] },
+    { n: "Cottage cheese",  r: [-1,-1, 1, 1] },
+    { n: "Feta",            r: [ 0, 0, 1, 1] },
+    { n: "Mozzarella",      r: [ 0, 0, 0, 1] },
+    { n: "Goat cheese",     r: [ 0, 0, 0, 0] },
+    { n: "Cow's milk",      r: [-1,-1, 0, 0] },
+    { n: "Butter",          r: [ 0,-1, 1,-1] },
+    { n: "Cheddar / American", r: [-1,-1, 0,-1] },
+    { n: "Ice cream",       r: [-1,-1,-1,-1] },
+  ]},
+  { cat: "Oils & Fats", emoji: "🫒", foods: [
+    { n: "Olive oil",       r: [ 1, 1, 0, 1] },
+    { n: "Flaxseed oil",    r: [ 1, 1, 0, 0] },
+    { n: "Canola oil",      r: [ 0, 1, 0, 0] },
+    { n: "Cod liver oil",   r: [ 1, 0, 0,-1] },
+    { n: "Sesame oil",      r: [ 0, 1,-1,-1] },
+    { n: "Peanut oil",      r: [-1,-1,-1, 0] },
+    { n: "Corn oil",        r: [-1,-1,-1,-1] },
+  ]},
+  { cat: "Nuts & Seeds", emoji: "🥜", foods: [
+    { n: "Walnuts",         r: [ 1, 0,-1, 1] },
+    { n: "Pumpkin seeds",   r: [ 1, 1,-1,-1] },
+    { n: "Flaxseeds",       r: [ 0, 1, 0, 1] },
+    { n: "Peanuts",         r: [-1, 1,-1, 1] },
+    { n: "Almonds",         r: [ 0, 0, 0, 0] },
+    { n: "Chestnuts",       r: [ 0, 0, 0, 0] },
+    { n: "Sunflower seeds", r: [ 0, 0,-1,-1] },
+    { n: "Sesame seeds",    r: [ 0, 0,-1,-1] },
+    { n: "Pistachios",      r: [-1,-1,-1,-1] },
+    { n: "Cashews",         r: [-1,-1,-1, 0] },
+  ]},
+  { cat: "Beans & Legumes", emoji: "🫘", foods: [
+    { n: "Soybeans / Tofu", r: [ 0, 1, 0, 1] },
+    { n: "Lentils",         r: [-1, 1,-1, 1] },
+    { n: "Black beans",     r: [ 0, 1,-1,-1] },
+    { n: "Pinto beans",     r: [ 0, 1,-1,-1] },
+    { n: "Adzuki beans",    r: [ 0, 1,-1,-1] },
+    { n: "Black-eyed peas", r: [ 0, 1,-1,-1] },
+    { n: "Lima beans",      r: [ 0,-1, 1,-1] },
+    { n: "Navy beans",      r: [-1, 0, 0, 0] },
+    { n: "Kidney beans",    r: [-1,-1, 0, 0] },
+    { n: "Chickpeas",       r: [-1, 0,-1, 0] },
+  ]},
+  { cat: "Grains & Cereals", emoji: "🌾", foods: [
+    { n: "Rice",            r: [ 0, 1, 0, 1] },
+    { n: "Millet",          r: [ 0, 0, 1, 1] },
+    { n: "Spelt",           r: [ 0, 1, 0, 1] },
+    { n: "Amaranth",        r: [ 0, 1,-1, 1] },
+    { n: "Rye",             r: [ 0, 1,-1, 0] },
+    { n: "Oats / Oatmeal",  r: [-1, 1, 0, 0] },
+    { n: "Barley",          r: [ 0, 0, 0, 0] },
+    { n: "Wheat / Whole wheat", r: [-1, 0,-1, 0] },
+    { n: "Buckwheat",       r: [ 0, 1,-1,-1] },
+    { n: "Corn",            r: [-1,-1,-1,-1] },
+  ]},
+  { cat: "Vegetables", emoji: "🥦", foods: [
+    { n: "Spinach",         r: [ 1, 1, 1, 1] },
+    { n: "Kale",            r: [ 1, 1, 1, 1] },
+    { n: "Broccoli",        r: [ 1, 1, 1, 1] },
+    { n: "Garlic",          r: [ 1, 1, 0, 0] },
+    { n: "Onion",           r: [ 1, 1, 0, 0] },
+    { n: "Kelp / Seaweed",  r: [ 1, 1, 0, 1] },
+    { n: "Beets",           r: [ 0, 1, 1, 1] },
+    { n: "Carrots",         r: [ 0, 1, 1, 0] },
+    { n: "Sweet potato",    r: [ 0, 1, 0, 0] },
+    { n: "Shiitake mushroom", r: [ 0, 1, 0, 1] },
+    { n: "Cabbage",         r: [-1, 0, 1, 0] },
+    { n: "Cauliflower",     r: [-1, 0, 1, 1] },
+    { n: "Eggplant",        r: [-1,-1, 1, 1] },
+    { n: "Tomato",          r: [ 0,-1,-1, 0] },
+    { n: "Bell pepper",     r: [ 0,-1, 0,-1] },
+    { n: "White potato",    r: [-1,-1, 0,-1] },
+    { n: "Brussels sprouts",r: [-1, 0, 0, 0] },
+    { n: "Olives (black)",  r: [-1, 1, 0, 1] },
+    { n: "Avocado",         r: [-1, 1, 0, 1] },
+  ]},
+  { cat: "Fruits", emoji: "🍎", foods: [
+    { n: "Plums",           r: [ 1, 1, 1, 1] },
+    { n: "Figs",            r: [ 1, 1, 1, 1] },
+    { n: "Pineapple",       r: [ 1, 1, 1, 1] },
+    { n: "Cherries",        r: [ 0, 1, 1, 1] },
+    { n: "Prunes",          r: [ 1, 1, 0, 0] },
+    { n: "Grapefruit",      r: [ 0, 1, 0, 1] },
+    { n: "Lemon",           r: [ 0, 1, 0, 1] },
+    { n: "Grapes",          r: [ 0, 0, 1, 1] },
+    { n: "Watermelon",      r: [ 0, 0, 1, 1] },
+    { n: "Cranberry",       r: [ 0, 0, 1, 1] },
+    { n: "Papaya",          r: [ 1,-1, 1, 0] },
+    { n: "Banana",          r: [ 1,-1, 1,-1] },
+    { n: "Apple",           r: [ 0, 0, 0, 0] },
+    { n: "Pear",            r: [ 0, 0, 0, 0] },
+    { n: "Mango",           r: [ 0,-1, 1, 0] },
+    { n: "Pomegranate",     r: [ 0, 1,-1, 0] },
+    { n: "Orange",          r: [-1,-1, 0,-1] },
+    { n: "Coconut",         r: [ 0,-1,-1,-1] },
+  ]},
+  { cat: "Beverages", emoji: "🍵", foods: [
+    { n: "Green tea",       r: [ 0, 1, 0, 1] },
+    { n: "Red wine",        r: [ 0, 1, 0, 1] },
+    { n: "Coffee",          r: [-1, 1,-1, 0] },
+    { n: "Black tea",       r: [ 0,-1, 0, 0] },
+    { n: "Beer",            r: [ 0, 0, 0,-1] },
+    { n: "Seltzer / Soda water", r: [ 0,-1, 0, 0] },
+    { n: "Cola / Soft drinks", r: [-1,-1,-1,-1] },
+  ]},
+];
+
+const STATUS = {
+  "1":  { key: "good",    cls: "good",    ic: "✓", label: "Beneficial" },
+  "0":  { key: "neutral", cls: "neutral", ic: "•", label: "Neutral" },
+  "-1": { key: "avoid",   cls: "avoid",   ic: "✕", label: "Avoid" },
+};
+const TYPE_KEYS = ["O", "A", "B", "AB"];
+
+/* ----------------------------------------------------------------------
+   State
+---------------------------------------------------------------------- */
+let state = {
+  type: localStorage.getItem("type-plate-type") || "O",
+  filter: "all",
+  query: "",
+  collapsed: {},
+};
+if (!TYPE_KEYS.includes(state.type)) state.type = "O";
+
+const $ = (sel) => document.querySelector(sel);
+
+/* ----------------------------------------------------------------------
+   Render: type selector
+---------------------------------------------------------------------- */
+function renderTypes() {
+  const nav = $("#typeSelector");
+  nav.innerHTML = TYPE_KEYS.map((t) => `
+    <button class="type-btn" data-type="${t}" aria-pressed="${t === state.type}">
+      <span class="letter">${t}</span>
+      <span class="label">${TYPES[t].nick}</span>
+    </button>`).join("");
+}
+
+function renderProfile() {
+  const t = TYPES[state.type];
+  $("#profile").innerHTML = `
+    <h2>Type ${state.type} — <span class="nick">${t.nick}</span></h2>
+    <p>${t.blurb}</p>
+    <div class="keys">${t.keys.map((k) => `<span>${k}</span>`).join("")}</div>`;
+}
+
+/* ----------------------------------------------------------------------
+   Render: food menu
+---------------------------------------------------------------------- */
+function renderMenu() {
+  const idx = TYPE_KEYS.indexOf(state.type);
+  const q = state.query.trim().toLowerCase();
+  const menu = $("#menu");
+  let html = "";
+  let total = 0;
+
+  MENU.forEach((cat, ci) => {
+    const rows = cat.foods
+      .map((f) => ({ f, st: STATUS[String(f.r[idx])] }))
+      .filter(({ f, st }) => {
+        if (q && !f.n.toLowerCase().includes(q)) return false;
+        if (state.filter !== "all" && st.key !== state.filter) return false;
+        return true;
+      });
+    if (!rows.length) return;
+    total += rows.length;
+
+    const collapsed = state.collapsed[ci] ? " collapsed" : "";
+    html += `
+      <section class="cat${collapsed}" data-ci="${ci}">
+        <button class="cat-head" aria-expanded="${!state.collapsed[ci]}">
+          <span class="ct-left">
+            <span class="emoji">${cat.emoji}</span>
+            <span class="ct-name">${cat.cat}</span>
+          </span>
+          <span class="ct-left">
+            <span class="ct-count">${rows.length}</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div class="food-list">
+          ${rows.map(({ f, st }) => `
+            <div class="food">
+              <span class="fname">${f.n}</span>
+              <span class="badge ${st.cls}"><span class="ic">${st.ic}</span>${st.label}</span>
+            </div>`).join("")}
+        </div>
+      </section>`;
+  });
+
+  menu.innerHTML = html || `<p class="empty">No foods match “${state.query}”.<br>Try another search or filter.</p>`;
+}
+
+function renderAll() {
+  renderTypes();
+  renderProfile();
+  renderMenu();
+}
+
+/* ----------------------------------------------------------------------
+   Events
+---------------------------------------------------------------------- */
+$("#typeSelector").addEventListener("click", (e) => {
+  const btn = e.target.closest(".type-btn");
+  if (!btn) return;
+  state.type = btn.dataset.type;
+  localStorage.setItem("type-plate-type", state.type);
+  renderAll();
+});
+
+$("#filters").addEventListener("click", (e) => {
+  const btn = e.target.closest(".filter");
+  if (!btn) return;
+  state.filter = btn.dataset.key;
+  document.querySelectorAll(".filter").forEach((b) =>
+    b.setAttribute("aria-pressed", b.dataset.key === state.filter));
+  renderMenu();
+});
+
+$("#search").addEventListener("input", (e) => {
+  state.query = e.target.value;
+  renderMenu();
+});
+
+$("#menu").addEventListener("click", (e) => {
+  const head = e.target.closest(".cat-head");
+  if (!head) return;
+  const ci = head.parentElement.dataset.ci;
+  state.collapsed[ci] = !state.collapsed[ci];
+  head.parentElement.classList.toggle("collapsed", state.collapsed[ci]);
+  head.setAttribute("aria-expanded", !state.collapsed[ci]);
+});
+
+/* theme toggle */
+const themeBtn = $("#themeToggle");
+function syncThemeIcon() {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  themeBtn.textContent = dark ? "☀️" : "🌙";
+}
+themeBtn.addEventListener("click", () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  const next = dark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("type-plate-theme", next);
+  syncThemeIcon();
+});
+
+syncThemeIcon();
+renderAll();
+</script>
+</body>
+</html>
