@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Liquid Glass UI Kit — demo</title>
+
+<!-- 1) Resolve the theme BEFORE first paint so there's no flash of the wrong mode.
+        This tiny inline copy mirrors GlassKit.applyStoredTheme(). -->
+<script>
+  (function () {
+    try {
+      var s = localStorage.getItem('glasskit-theme');
+      var dark = s ? s === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    } catch (e) {}
+  })();
+</script>
+
+<!-- 2) Optional: bring Nudge's display font along. Remove this block to use the
+        serif fallback baked into the kit. -->
+<style>
+  @font-face {
+    font-family: 'Averia Sans Libre';
+    src: url('../AveriaSansLibre-Bold.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+</style>
+
+<!-- 3) The kit -->
+<link rel="stylesheet" href="liquid-glass.css" />
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 28px 18px 80px;
+    padding-top: max(28px, env(safe-area-inset-top));
+    padding-bottom: max(80px, env(safe-area-inset-bottom));
+  }
+  .shell { position: relative; z-index: 1; width: 100%; max-width: 480px; }
+  header { text-align: center; margin-bottom: 26px; }
+  h1 { font-family: var(--font-display); font-size: 34px; font-weight: 700; letter-spacing: -0.01em; margin: 8px 0 6px; }
+  .lede { color: var(--ink-soft); font-size: 16px; line-height: 1.5; }
+
+  .card { padding: 26px 22px; margin-bottom: 18px; }
+  .card > .section-title { font-family: var(--font-display); font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .tile { border-radius: var(--radius-sm); padding: 26px 8px; text-align: center; color: var(--ink); touch-action: none; user-select: none; }
+  .tile .n { font-family: var(--font-display); font-size: 34px; font-weight: 700; }
+  .tile .cap { display: block; font-size: 11px; color: var(--ink-faint); margin-top: 4px; }
+
+  .stack > * + * { margin-top: 14px; }
+  .hint { font-size: 13px; color: var(--ink-faint); line-height: 1.5; margin-top: 14px; text-align: center; }
+  .chip { display: inline-flex; align-items: center; padding: 12px 22px; color: var(--ink); font-family: var(--font-display); font-size: 15px; touch-action: none; user-select: none; }
+  .center { display: flex; justify-content: center; }
+  code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--glass-bg); padding: 2px 7px; border-radius: 8px; }
+</style>
+</head>
+<body class="glass-bg">
+  <div class="glass-wash"></div>
+
+  <!-- theme toggle: data-theme-toggle is wired by GlassKit.init() -->
+  <button class="theme-toggle glass" type="button" data-theme-toggle aria-label="Toggle dark mode">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4.2"/>
+      <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 14.5A8 8 0 1 1 9.5 4a6.2 6.2 0 0 0 10.5 10.5Z"/>
+    </svg>
+  </button>
+
+  <div class="shell">
+    <header class="rise">
+      <div class="eyebrow">Liquid Glass</div>
+      <h1>UI Kit</h1>
+      <p class="lede">Drag the tiles. Hover to tilt them. Toss them around — they spring back. Tap the moon to switch worlds.</p>
+    </header>
+
+    <!-- floating, draggable glass tiles -->
+    <section class="card rise">
+      <div class="section-title">Floating · draggable · tilt</div>
+      <div class="tiles">
+        <div class="glass tile" data-glass data-float><span class="n">1</span><span class="cap">drag me</span></div>
+        <div class="glass tile" data-glass data-float><span class="n">2</span><span class="cap">fling me</span></div>
+        <div class="glass tile" data-glass data-float><span class="n">5</span><span class="cap">tilt me</span></div>
+      </div>
+      <p class="hint">Add <code>data-glass</code> for physics, <code>data-float</code> for idle drift.</p>
+    </section>
+
+    <!-- buttons -->
+    <section class="card rise">
+      <div class="section-title">Buttons</div>
+      <div class="stack">
+        <button class="btn glass" data-glass data-float>Primary action</button>
+        <div class="btn-row">
+          <button class="btn btn-ghost glass" data-glass>Ghost</button>
+          <button class="btn btn-ghost glass" data-glass>Ghost</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- field -->
+    <section class="card rise">
+      <div class="section-title">Field</div>
+      <input class="field" type="text" placeholder="Type something…" />
+    </section>
+
+    <!-- standalone pill chip -->
+    <section class="card rise">
+      <div class="section-title">Pill</div>
+      <div class="center">
+        <span class="glass chip r-pill" data-glass data-float>✦ Draggable pill</span>
+      </div>
+    </section>
+
+    <p class="hint">All of this is <code>liquid-glass.css</code> + <code>liquid-glass.js</code> — no build, no deps.</p>
+  </div>
+
+  <script src="liquid-glass.js"></script>
+  <script>
+    // Wire every [data-glass] / [data-float] / [data-theme-toggle] on the page.
+    GlassKit.init();
+  </script>
+</body>
+</html>
